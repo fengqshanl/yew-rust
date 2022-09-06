@@ -78,20 +78,18 @@ mod db {
             .ok_or(MyError::NotFound) // more applicable for SELECTs
     }
 
-    pub async fn get_user(client: &Client) -> Result<User, MyError> {
+    pub async fn get_user(client: &Client) -> Result<Vec<User>, MyError> {
         println!("search options");
         let _stmt = include_str!("../sql/get_users.sql");
         let stmt = client.prepare(&_stmt).await.unwrap();
-        client
-            .query(
-                &stmt,&[]
-            )
-            .await?
-            .iter()
-            .map(|row| User::from_row_ref(row).unwrap())
-            .collect::<Vec<User>>()
-            .pop()
-            .ok_or(MyError::NotFound)
+        Ok(client
+                    .query(
+                        &stmt,&[]
+                    )
+                    .await?
+                    .iter()
+                    .map(|row| User::from_row_ref(row).unwrap())
+                    .collect::<Vec<User>>())
     }
 }
 
@@ -124,11 +122,11 @@ mod handlers {
 }
 
 use ::config::Config;
-use actix_web::{web, App, HttpServer};
+use actix_web::{App, web, HttpServer, http::header};
 use dotenv::dotenv;
+use actix_cors::Cors;
 use handlers::{add_user, get_user};
 use tokio_postgres::NoTls;
-
 use crate::config::ExampleConfig;
 
 #[actix_web::main]
@@ -149,6 +147,7 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
+            .wrap(Cors::permissive())
             .service(web::resource("/users").route(web::post().to(add_user)))
             .service(web::resource("/").route(web::get().to(get_user)))
     })
