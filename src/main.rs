@@ -31,8 +31,10 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .wrap(Cors::permissive())
-            .service(web::resource("/drug").route(web::post().to(add_drug)))
-            .service(web::resource("/drug").route(web::get().to(get_drug)))
+            .service(web::resource("/drug")
+                .route(web::post().to(add_drug))
+                .route(web::get().to(get_drug))
+            )
     })
     .bind(config.server_addr.clone())?
     .run();

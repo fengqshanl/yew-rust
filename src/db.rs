@@ -13,9 +13,22 @@ pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError>
         .query(
             &stmt,
             &[
-                &drug_info.id,
+                &drug_info.drug_id,
+                &drug_info.drug_number,
                 &drug_info.name,
-                &drug_info.age,
+                &drug_info.adverse_reaction,
+                &drug_info.character,
+                &drug_info.approval_number,
+                &drug_info.expiry_date,
+                &drug_info.ingredient,
+                &drug_info.major_function,
+                &drug_info.manufacturing_enterprise,
+                &drug_info.matters_need_attention,
+                &drug_info.produced_time,
+                &drug_info.specification,
+                &drug_info.store_up,
+                &drug_info.taboo,
+                &drug_info.usage_dosage,
             ],
         )
         .await?
