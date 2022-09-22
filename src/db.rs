@@ -19,13 +19,13 @@ pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError>
                 &drug_info.adverse_reaction,
                 &drug_info.character,
                 &drug_info.approval_number,
-                &drug_info.expiry_date,
                 &drug_info.ingredient,
                 &drug_info.major_function,
                 &drug_info.manufacturing_enterprise,
                 &drug_info.matters_need_attention,
                 &drug_info.produced_time,
                 &drug_info.specification,
+                &drug_info.expiry_date,
                 &drug_info.store_up,
                 &drug_info.taboo,
                 &drug_info.usage_dosage,
@@ -33,10 +33,13 @@ pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError>
         )
         .await?
         .iter()
-        .map(|row| Drug::from_row_ref(row).unwrap())
+        .map(|row| {
+            println!("row");
+            Drug::from_row_ref(row).unwrap()
+        })
         .collect::<Vec<Drug>>()
         .pop()
-        .ok_or(MyError::NotFound) // more applicable for SELECTs
+        .ok_or(MyError::NotFound)
 }
 
 pub async fn get_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
