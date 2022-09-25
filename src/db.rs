@@ -4,7 +4,6 @@ use tokio_pg_mapper::FromTokioPostgresRow;
 use crate::{errors::MyError, models::Drug};
 
 pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError> {
-    println!("insert options:{:?}", drug_info);
     let _stmt = include_str!("../sql/add_drug.sql");
     let _stmt = _stmt.replace("$table_fields", &Drug::sql_table_fields());
     let stmt = client.prepare(&_stmt).await.unwrap();
@@ -52,6 +51,9 @@ pub async fn get_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
         )
         .await?
         .iter()
-        .map(|row| Drug::from_row_ref(row).unwrap())
+        .map(|row| {
+            println!("row: {:?}", row);
+            Drug::from_row_ref(row).unwrap()
+        })
         .collect::<Vec<Drug>>())
 }
