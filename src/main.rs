@@ -8,9 +8,9 @@ use ::config::Config;
 use actix_web::{App, web, HttpServer, http::header};
 use dotenv::dotenv;
 use actix_cors::Cors;
-use handlers::{add_drug, get_drug};
+use handlers::handlers::{add_drug, get_drug};
 use tokio_postgres::NoTls;
-use crate::config::ExampleConfig;
+use crate::config::config::ExampleConfig;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
