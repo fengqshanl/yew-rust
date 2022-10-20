@@ -1,10 +1,9 @@
 use deadpool_postgres::Client;
 use tokio_pg_mapper::FromTokioPostgresRow;
-
-use crate::{errors::errors::MyError, models::models::Drug};
+use crate::{errors::errors::MyError, models::drug::Drug};
 
 pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError> {
-    let _stmt = include_str!("../../sql/add_drug.sql");
+    let _stmt = include_str!("../../sql/drug/add_drug.sql");
     let _stmt = _stmt.replace("$table_fields", &Drug::sql_table_fields());
     let stmt = client.prepare(&_stmt).await.unwrap();
 
@@ -23,7 +22,6 @@ pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError>
         .await?
         .iter()
         .map(|row| {
-            println!("row");
             Drug::from_row_ref(row).unwrap()
         })
         .collect::<Vec<Drug>>()
@@ -33,7 +31,7 @@ pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError>
 
 pub async fn get_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
     println!("search options");
-    let _stmt = include_str!("../../sql/get_drug.sql");
+    let _stmt = include_str!("../../sql/drug/get_drug.sql");
     let stmt = client.prepare(&_stmt).await.unwrap();
     Ok(client
         .query(
@@ -42,7 +40,6 @@ pub async fn get_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
         .await?
         .iter()
         .map(|row| {
-            println!("row: {:?}", row);
             Drug::from_row_ref(row).unwrap()
         })
         .collect::<Vec<Drug>>())

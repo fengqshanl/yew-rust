@@ -5,10 +5,10 @@ mod handlers;
 mod models;
 
 use ::config::Config;
-use actix_web::{App, web, HttpServer, http::header};
+use actix_web::{App, web, HttpServer};
 use dotenv::dotenv;
 use actix_cors::Cors;
-use handlers::handlers::{add_drug, get_drug};
+use handlers::{ drug::{add_drug, get_drug}, sale::{add_sale, get_sale}} ;
 use tokio_postgres::NoTls;
 use crate::config::config::ExampleConfig;
 
@@ -34,6 +34,10 @@ async fn main() -> std::io::Result<()> {
             .service(web::resource("/drug")
                 .route(web::post().to(add_drug))
                 .route(web::get().to(get_drug))
+            )
+            .service(web::resource("/sale")
+                .route(web::post().to(add_sale))
+                .route(web::get().to(get_sale))
             )
     })
     .bind(config.server_addr.clone())?

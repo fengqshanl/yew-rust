@@ -17,10 +17,10 @@ pub struct Purchase {
 impl Purchase {
     pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
         println!("my from_row_ref");
-        Ok(Pirchase{
+        Ok(Purchase{
             per_id: row.try_get::<&str, Uuid>("per_id")?.hyphenated().to_string(),
             stock: row.try_get::<&str, String>("stock")?.to_string(),
-            money: row.try_get::<&str, String>("money")?..to_string(),
+            money: row.try_get::<&str, String>("money")?.to_string(),
             drug_id: row.try_get::<&str, Uuid>("drug_id")?.hyphenated().to_string(),
         })
     }

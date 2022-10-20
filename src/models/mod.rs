@@ -1,6 +1,6 @@
-pub mod Drug;
-pub mod Broth;
-pub mod Classification;
-pub mod Inventory;
-pub mod Purchase;
-pub mod Sale;
+pub mod drug;
+pub mod broth_song;
+pub mod classification;
+pub mod inventory;
+pub mod purchase;
+pub mod sale;
