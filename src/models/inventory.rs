@@ -17,7 +17,6 @@ pub struct Inventory {
 
 impl Inventory {
     pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
-        println!("my from_row_ref");
         Ok(Inventory{
             inv_id: row.try_get::<&str, Uuid>("inv_id")?.hyphenated().to_string(),
             drug_id: row.try_get::<&str, Uuid>("drug_id")?.hyphenated().to_string(),

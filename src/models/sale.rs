@@ -19,7 +19,6 @@ pub struct Sale {
 
 impl Sale {
     pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
-        println!("my from_row_ref");
         Ok(Sale{
             sale_id: row.try_get::<&str, Uuid>("sale_id")?.hyphenated().to_string(),
             drug_id: row.try_get::<&str, Uuid>("drug_id")?.hyphenated().to_string(),
