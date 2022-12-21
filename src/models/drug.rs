@@ -12,6 +12,7 @@ pub struct Drug {
     pub drug_id: String,
     pub class_id: String,
     pub usage_dosage: String,
+    pub drug_number: i64,
     pub matters_need_attention: String,
     pub a_b_classify: String,
 }
@@ -25,6 +26,7 @@ impl Drug {
             usage_dosage: row.try_get::<&str, String>("usage_dosage")?.to_string(),
             matters_need_attention: row.try_get::<&str, String>("matters_need_attention")?.to_string(),
             a_b_classify: row.try_get::<&str, String>("a_b_classify")?.to_string(),
+            drug_number: row.try_get::<&str, i128>("drug_number")?.to_string(),
         })
     }
 }
