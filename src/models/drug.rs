@@ -26,7 +26,7 @@ impl Drug {
             usage_dosage: row.try_get::<&str, String>("usage_dosage")?.to_string(),
             matters_need_attention: row.try_get::<&str, String>("matters_need_attention")?.to_string(),
             a_b_classify: row.try_get::<&str, String>("a_b_classify")?.to_string(),
-            drug_number: row.try_get::<&str, i128>("drug_number")?.to_string(),
+            drug_number: row.try_get::<&str, i64>("drug_number").expect("i64 get error"),
         })
     }
 }
