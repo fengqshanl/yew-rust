@@ -262,6 +262,7 @@ dependencies = [
  "postgres-types",
  "reqwest",
  "serde",
+ "time",
  "tokio-pg-mapper",
  "tokio-pg-mapper-derive",
  "tokio-postgres",
@@ -1262,6 +1263,7 @@ dependencies = [
  "fallible-iterator",
  "postgres-derive",
  "postgres-protocol",
+ "time",
  "uuid",
 ]
 

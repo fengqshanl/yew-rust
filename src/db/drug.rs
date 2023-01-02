@@ -30,7 +30,6 @@ pub async fn add_drug(client: &Client, drug_info: Drug) -> Result<Drug, MyError>
 }
 
 pub async fn get_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
-    println!("search options");
     let _stmt = include_str!("../../sql/drug/get_drug.sql");
     let stmt = client.prepare(&_stmt).await.unwrap();
     Ok(client
