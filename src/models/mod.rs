@@ -4,3 +4,4 @@ pub mod classification;
 pub mod inventory;
 pub mod purchase;
 pub mod sale;
+pub mod purchase_detail;

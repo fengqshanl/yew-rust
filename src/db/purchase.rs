@@ -1,8 +1,8 @@
 use deadpool_postgres::Client;
 use tokio_pg_mapper::FromTokioPostgresRow;
-use crate::{errors::errors::MyError, models::purchase::Purchase};
+use crate::{errors::errors::MyError, models::purchase::Purchase, front::purchase::FRPurchase};
 
-pub async fn add_purchase(client: &Client, purchase_info: Purchase) -> Result<Purchase, MyError> {
+pub async fn add_purchase(client: &Client, purchase_info: FRPurchase) -> Result<Purchase, MyError> {
     let _stmt = include_str!("../../sql/purchase/add_purchase.sql");
     let _stmt = _stmt.replace("$table_fields", &Purchase::sql_table_fields());
     let stmt = client.prepare(&_stmt).await.unwrap();

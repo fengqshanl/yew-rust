@@ -43,3 +43,34 @@ pub async fn get_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
         })
         .collect::<Vec<Drug>>())
 }
+
+pub async fn get_all_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
+    let _stmt = include_str!("../../sql/drug/get_all_drug.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    Ok(client
+        .query(
+            &stmt, &[],
+        )
+        .await?
+        .iter()
+        .map(|row| {
+            Drug::from_row_ref(row).unwrap()
+        })
+        .collect::<Vec<Drug>>())
+}
+
+pub async fn search_drug_name(client: &Client, name: &str) -> Result<Vec<Drug>, MyError> {
+    let _stmt = include_str!("../../sql/drug/search_drug_name.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    println!("here");
+    Ok(client
+        .query(
+            &stmt, &[&name],
+        )
+        .await?
+        .iter()
+        .map(|row| {
+            Drug::from_row_ref(row).unwrap()
+        })
+        .collect::<Vec<Drug>>())
+}

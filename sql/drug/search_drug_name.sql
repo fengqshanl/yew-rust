@@ -1,0 +1,1 @@
+SELECT * FROM drug WHERE position($1 in name) > 0;

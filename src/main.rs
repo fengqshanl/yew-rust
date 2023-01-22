@@ -3,6 +3,7 @@ mod db;
 mod errors;
 mod handlers;
 mod models;
+mod front;
 
 use crate::config::config::ExampleConfig;
 use ::config::Config;
@@ -10,7 +11,7 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use handlers::{
-    drug::{add_drug, get_drug},
+    drug::{add_drug, get_drug, get_all_drug, search_drug_name},
     purchase::{add_purchase, get_purchase},
     sale::{add_sale, get_sale},
 };
@@ -37,6 +38,14 @@ async fn main() -> std::io::Result<()> {
                 web::resource("/drug")
                     .route(web::post().to(add_drug))
                     .route(web::get().to(get_drug)),
+            )
+            .service(
+                web::resource("/all")
+                    .route(web::get().to(get_all_drug))
+            )
+            .service(
+                web::resource("/search_drug_name")
+                    .route(web::put().to(search_drug_name))   
             )
             .service(
                 web::resource("/sale")
