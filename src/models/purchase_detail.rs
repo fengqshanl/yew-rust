@@ -22,10 +22,10 @@ impl PurchaseDetail {
         Ok(PurchaseDetail{
             purchase: row.try_get::<&str, Uuid>("purchase")?.hyphenated().to_string(),
             drug_id: row.try_get::<&str, Uuid>("drug_id")?.hyphenated().to_string(),
-            sale_money: row.try_get::<&str, f32>("sale_money").expect("purchase money error"),
-            self_money: row.try_get::<&str, f32>("self_money").expect("purchase money error"),
-            number: row.try_get::<&str, i32>("number").expect("purchase kind error"),
-            name: row.try_get::<&str, String>("name").expect("purchase kind error"),
+            sale_money: row.try_get::<&str, f32>("sale_money")?,
+            self_money: row.try_get::<&str, f32>("self_money")?,
+            number: row.try_get::<&str, i32>("number")?,
+            name: row.try_get::<&str, String>("name")?,
         })
     }
 }

@@ -10,7 +10,7 @@ pub struct FRPurchase {
     pub detail: Vec<FRPurchaseType>
 }
 
-#[derive(Clone, Debug, PartialEq, Properties, Default, Deserialize, Serialize, ToSql, FromSql)]
+#[derive(Clone, Debug, PartialEq, Default, Deserialize, Serialize, ToSql, FromSql)]
 pub struct FRPurchaseType {
     pub id: String,
     pub name: String,

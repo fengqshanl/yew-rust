@@ -1,30 +1,25 @@
 use deadpool_postgres::Client;
 use tokio_pg_mapper::FromTokioPostgresRow;
+use uuid::Uuid;
+use std::time::{SystemTime};
 use crate::{errors::errors::MyError, models::purchase::Purchase, front::purchase::FRPurchase};
 
-pub async fn add_purchase(client: &Client, purchase_info: FRPurchase) -> Result<Purchase, MyError> {
+pub async fn add_purchase(client: &Client, purchase_info: FRPurchase) -> Result<(), MyError> {
     let _stmt = include_str!("../../sql/purchase/add_purchase.sql");
     let _stmt = _stmt.replace("$table_fields", &Purchase::sql_table_fields());
     let stmt = client.prepare(&_stmt).await.unwrap();
-
     client
         .query(
             &stmt,
             &[
-                &purchase_info.per_id,
+                &Uuid::parse_str(&purchase_info.per_id).expect("msg"),
                 &purchase_info.money,
                 &purchase_info.kind,
-                &purchase_info.in_time,
+                &SystemTime::now(),
             ],
         )
-        .await?
-        .iter()
-        .map(|row| {
-            Purchase::from_row_ref(row).unwrap()
-        })
-        .collect::<Vec<Purchase>>()
-        .pop()
-        .ok_or(MyError::NotFound)
+        .await.expect("msg");
+        Ok(())
 }
 
 pub async fn get_purchase(client: &Client) -> Result<Vec<Purchase>, MyError> {
