@@ -17,7 +17,6 @@ pub struct Purchase {
 
 impl Purchase {
     pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
-        println!("models - purchase: {:?}", row);
         Ok(Purchase{
             per_id: row.try_get::<&str, Uuid>("per_id")?.hyphenated().to_string(),
             money: row.try_get::<&str, f32>("money")?,
