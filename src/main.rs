@@ -3,6 +3,7 @@ mod db;
 mod errors;
 mod handlers;
 mod models;
+mod client;
 mod front;
 
 use crate::config::config::ExampleConfig;
