@@ -1,36 +1,42 @@
 use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
 use tokio_postgres::error::Error;
-use uuid::Uuid;
 use tokio_postgres::Row;
 use postgres_types::{self, ToSql, FromSql};
 
-#[derive(Deserialize, PostgresMapper, Serialize, Debug, ToSql, FromSql)]
-#[pg_mapper(table = "drug")]
-pub struct Drug {
-    pub name: String,
-    pub drug_id: String,
-    pub class_id: String,
-    pub usage_dosage: String,
-    pub drug_number: i64,
-    pub serial_number: String,
-    pub matters_need_attention: String,
-    pub a_b_classify: String,
+#[derive(Deserialize, Serialize, Debug, Default)]
+pub struct DrugOriginStruct {
+    pub code: i64,
+    pub msg: String,
+    pub taskNo: String, 
+    pub data: DrugOrigin
 }
 
-impl Drug {
-    pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
-        Ok(Drug{
-            name: row.try_get::<&str, String>("name")?.to_string(),
-            drug_id: row.try_get::<&str, Uuid>("drug_id")?.hyphenated().to_string(),
-            class_id: row.try_get::<&str, Uuid>("class_id")?.hyphenated().to_string(),
-            usage_dosage: row.try_get::<&str, String>("usage_dosage")?.to_string(),
-            matters_need_attention: row.try_get::<&str, String>("matters_need_attention")?.to_string(),
-            serial_number: row.try_get::<&str, String>("serial_number")?.to_string(),
-            a_b_classify: row.try_get::<&str, String>("a_b_classify")?.to_string(),
-            drug_number: row.try_get::<&str, i64>("drug_number").expect("i64 get error"),
-        })
-    }
+#[derive(Deserialize, Serialize, Debug, Default)]
+pub struct DrugOrigin {
+    pub code: String, // 条形码
+    pub sptmImg: String, // 条码图片
+    pub img: String, // 图片
+    pub goodsType: String, // 商品分类
+    pub trademark: String, // 品牌 
+    pub goodsName: String, // 商品名称
+    pub spec: String, // 规格
+    pub note: String, // 备注信息
+    pub price: String, // 参考价格(单位:元)
+    pub ycg: String, // 原产地(可能无此参数信息)
+    pub manuName: String, // 厂商
+    pub manuAddress: String, //  厂商地址
+    pub qs: String,//生产许可证号
+    pub nw: String,//净重
+    pub description: String,//形态描述
+    pub gw: String,//毛重
+    pub width: String,//宽
+    pub hight: String,//高
+    pub depth: String,//深
+    // pub gpc: String,//gpc分类代码
+    // pub gpcType: String,//gpc分类名称    
+    pub keyword: String,//关键词
+    pub imgList: Vec<String> // 条码中心图片列表
 }
 
 #[derive(Debug, Deserialize, Clone)]
