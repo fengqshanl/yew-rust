@@ -10,22 +10,26 @@ use time;
 #[pg_mapper(table = "purchase_detail0")]
 pub struct PurchaseDetail {
     pub purchase: String,
-    pub drug_id: String,
+    pub code: String,
     pub sale_money: f32,
     pub name: String,
-    pub number: i32,
+    pub number: f32,
     pub self_money: f32,
+    pub manu_address: String,
+    pub spec: String
 }
 
 impl PurchaseDetail {
     pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
         Ok(PurchaseDetail{
             purchase: row.try_get::<&str, Uuid>("purchase")?.hyphenated().to_string(),
-            drug_id: row.try_get::<&str, Uuid>("drug_id")?.hyphenated().to_string(),
+            code: row.try_get::<&str, String>("drug_id")?,
             sale_money: row.try_get::<&str, f32>("sale_money")?,
             self_money: row.try_get::<&str, f32>("self_money")?,
-            number: row.try_get::<&str, i32>("number")?,
+            number: row.try_get::<&str, f32>("number")?,
             name: row.try_get::<&str, String>("name")?,
+            manu_address: row.try_get::<&str, String>("manu_address")?,
+            spec: row.try_get::<&str, String>("spex")?,
         })
     }
 }
