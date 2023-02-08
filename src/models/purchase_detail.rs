@@ -23,13 +23,13 @@ impl PurchaseDetail {
     pub fn from_row_ref(row: &Row) -> Result<Self, Error>{
         Ok(PurchaseDetail{
             purchase: row.try_get::<&str, Uuid>("purchase")?.hyphenated().to_string(),
-            code: row.try_get::<&str, String>("drug_id")?,
+            code: row.try_get::<&str, String>("code")?,
             sale_money: row.try_get::<&str, f32>("sale_money")?,
             self_money: row.try_get::<&str, f32>("self_money")?,
             number: row.try_get::<&str, f32>("number")?,
             name: row.try_get::<&str, String>("name")?,
             manu_address: row.try_get::<&str, String>("manu_address")?,
-            spec: row.try_get::<&str, String>("spex")?,
+            spec: row.try_get::<&str, String>("spec")?,
         })
     }
 }

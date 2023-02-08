@@ -13,7 +13,7 @@ use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use handlers::{
     drug::{add_drug, get_drug},
-    purchase::{add_purchase, get_purchase},
+    purchase::{add_purchase, get_purchase, get_purchase_detail},
     sale::{add_sale, get_sale},
 };
 use tokio_postgres::NoTls;
@@ -57,6 +57,10 @@ async fn main() -> std::io::Result<()> {
                 web::resource("/purchase")
                     .route(web::post().to(add_purchase))
                     .route(web::get().to(get_purchase)),
+            )
+            .service(
+                web::resource("/purchase_detail")
+                    .route(web::get().to(get_purchase_detail)),
             )
     })
     .bind(config.server_addr.clone())?

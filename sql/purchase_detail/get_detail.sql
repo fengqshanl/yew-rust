@@ -1,0 +1,1 @@
+SELECT * FROM purchase_detail0 WHERE purchase=$1;

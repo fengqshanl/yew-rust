@@ -36,3 +36,4 @@ pub async fn get_purchase(client: &Client) -> Result<Vec<Purchase>, MyError> {
         })
         .collect::<Vec<Purchase>>())
 }
+

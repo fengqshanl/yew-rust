@@ -44,6 +44,12 @@ pub struct DrugId {
    pub id: String,
 }
 
+#[derive(Debug, Deserialize, Clone)]
+pub struct DrugDetailId {
+   pub id: String,
+}
+
+
 #[derive(Debug, Deserialize, Clone, Serialize, Default, ToSql, FromSql, PostgresMapper)]
 #[pg_mapper(table = "drug")]
 pub struct DrugDetail {

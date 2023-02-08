@@ -1,8 +1,7 @@
 use deadpool_postgres::Client;
-use tokio_pg_mapper::FromTokioPostgresRow;
-use crate::front::purchase::FRPurchaseType;
+use crate::{front::purchase::FRPurchaseType, models::purchase_detail::PurchaseDetail};
 use uuid::Uuid;
-use crate::{errors::errors::MyError, models::{purchase::Purchase, purchase_detail::PurchaseDetail}};
+use crate::{errors::errors::MyError};
 
 pub async fn add_detail(client: &Client, purchase_detail: FRPurchaseType, purchase_id: String) -> Result<(), MyError> {
     let _stmt = include_str!("../../sql/purchase_detail/add_detail.sql");
@@ -24,4 +23,21 @@ pub async fn add_detail(client: &Client, purchase_detail: FRPurchaseType, purcha
         )
         .await.expect("msg");
         Ok(())
+}
+
+pub async fn get_purchase_detail(client: &Client, id: String) -> Result<Vec<PurchaseDetail>, MyError> {
+    let _stmt = include_str!("../../sql/purchase_detail/get_detail.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    println!("_stmt: {:?}", _stmt);
+    Ok(client
+        .query(
+            &stmt, &[&Uuid::parse_str(&id).expect("err")],
+        )
+        .await?
+        .iter()
+        .map(|row| {
+            println!("row format: {:?}", row);
+            PurchaseDetail::from_row_ref(row).unwrap()
+        })
+        .collect::<Vec<PurchaseDetail>>())
 }
