@@ -4,7 +4,7 @@ use deadpool_postgres::{Client, Pool};
 use crate::{
     db::{purchase, purchase_detail}, 
     errors::errors::MyError, 
-    front::purchase::FRPurchase, models::drug::DrugDetailId
+    front::purchase::FRPurchase, models::drug::local::DrugDetailId
 };
 
 pub async fn add_purchase(
@@ -37,5 +37,14 @@ pub async fn get_purchase_detail(
 ) -> Result<HttpResponse, Error> {
     let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
     let new_drug = purchase_detail::get_purchase_detail(&client, detail_id.id.to_string().clone()).await?;
+    Ok(HttpResponse::Ok().json(new_drug))
+}
+
+pub async fn get_sale_purchase_detail(
+    detail_id: web::Query<DrugDetailId>,
+    db_pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+    let new_drug = purchase_detail::get_sale_purchase_detail(&client, detail_id.id.to_string().clone()).await?;
     Ok(HttpResponse::Ok().json(new_drug))
 }

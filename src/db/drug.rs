@@ -2,11 +2,11 @@ use deadpool_postgres::Client;
 use reqwest::{Method};
 use serde::{Serialize, Deserialize};
 use tokio_pg_mapper::FromTokioPostgresRow;
-use crate::{errors::errors::MyError, models::drug::{DrugOriginStruct, DrugDetail}, client::client::request};
+use crate::{errors::errors::MyError, models::drug::{frontend::FrontDrugDetail, db::DBDrugDetail, aliorigin::AliDrugStruct}, client::client::request};
 
-pub async fn add_drug(client: &Client, drug_info: DrugDetail) -> Result<DrugDetail, MyError> {
+pub async fn add_drug(client: &Client, drug_info: DBDrugDetail) -> Result<FrontDrugDetail, MyError> {
     let _stmt = include_str!("../../sql/drug/add_drug.sql");
-    let _stmt = _stmt.replace("$table_fields", &DrugDetail::sql_table_fields());
+    let _stmt = _stmt.replace("$table_fields", &DBDrugDetail::sql_table_fields());
     let stmt = client.prepare(&_stmt).await.unwrap();
     // -- "code": "69********432", // 条形码
     // -- "sptmImg": "", // 条码图片
@@ -64,9 +64,9 @@ pub async fn add_drug(client: &Client, drug_info: DrugDetail) -> Result<DrugDeta
         .iter()
         .map(|row| {
             println!("row:::: ==== {:?}", row);
-            DrugDetail::from_row_ref(row).unwrap()
+            FrontDrugDetail::from_row_ref(row).unwrap()
         })
-        .collect::<Vec<DrugDetail>>()
+        .collect::<Vec<FrontDrugDetail>>()
         .pop()
         .ok_or(MyError::NotFound)
 }
@@ -77,7 +77,7 @@ struct DrugQueryBody {
     code: String
 }
 
-pub async fn get_drug(client: &Client, code: String) -> Result<DrugDetail, MyError> {
+pub async fn get_drug(client: &Client, code: String) -> Result<FrontDrugDetail, MyError> {
     let _stmt = include_str!("../../sql/drug/get_drug.sql");
     let stmt = client.prepare(&_stmt).await.unwrap();
     let res = client
@@ -87,45 +87,14 @@ pub async fn get_drug(client: &Client, code: String) -> Result<DrugDetail, MyErr
         .await?
         .iter()
         .map(|row| {
-            DrugDetail::from_row_ref(row).unwrap()
+            FrontDrugDetail::from_row_ref(row).unwrap()
         })
-        .collect::<Vec<DrugDetail>>();
+        .collect::<Vec<FrontDrugDetail>>();
     if res.len() == 0 {
-        let detail = request::<DrugOriginStruct>(Method::POST, "http://jumbarcode.market.alicloudapi.com/bar-code/query".to_string(), code, true).await.expect("msg");
+        let detail = request::<AliDrugStruct>(Method::POST, "http://jumbarcode.market.alicloudapi.com/bar-code/query".to_string(), code, true).await.expect("msg");
         let detail = detail.data;
-        let resu = add_drug(client, DrugDetail { code: detail.code, sptm_img: detail.sptmImg, img: detail.img, goods_type: detail.goodsType, trademark: detail.trademark, goods_name: detail.goodsName, spec: detail.spec, note: detail.note, price: detail.price, ycg: detail.ycg, manu_name: detail.manuName, manu_address: detail.manuAddress, qs: detail.qs, nw: detail.nw, description: detail.description, gw: detail.gw, width: detail.width, height: detail.hight, depth: detail.depth, gpc: "".to_string(), gpc_type: "".to_string(), keyword: detail.keyword, img_list: serde_json::to_string(&detail.imgList).expect("msg") }).await.expect("msg");
+        let resu = add_drug(client, DBDrugDetail { code: detail.code, sptm_img: detail.sptmImg, img: detail.img, goods_type: detail.goodsType, trademark: detail.trademark, goods_name: detail.goodsName, spec: detail.spec, note: detail.note, price: detail.price, ycg: detail.ycg, manu_name: detail.manuName, manu_address: detail.manuAddress, qs: detail.qs, nw: detail.nw, description: detail.description, gw: detail.gw, width: detail.width, height: detail.hight, depth: detail.depth, gpc: "".to_string(), gpc_type: "".to_string(), keyword: detail.keyword, img_list: serde_json::to_string(&detail.imgList).expect("msg"), drug_id: None }).await.expect("msg");
         return Ok(resu)
     }
     Ok(res[0].clone())
 }
-
-// pub async fn get_all_drug(client: &Client) -> Result<Vec<Drug>, MyError> {
-//     let _stmt = include_str!("../../sql/drug/get_all_drug.sql");
-//     let stmt = client.prepare(&_stmt).await.unwrap();
-//     Ok(client
-//         .query(
-//             &stmt, &[],
-//         )
-//         .await?
-//         .iter()
-//         .map(|row| {
-//             Drug::from_row_ref(row).unwrap()
-//         })
-//         .collect::<Vec<Drug>>())
-// }
-
-// pub async fn search_drug_name(client: &Client, name: &str) -> Result<Vec<Drug>, MyError> {
-//     let _stmt = include_str!("../../sql/drug/search_drug_name.sql");
-//     let stmt = client.prepare(&_stmt).await.unwrap();
-//     println!("here");
-//     Ok(client
-//         .query(
-//             &stmt, &[&name],
-//         )
-//         .await?
-//         .iter()
-//         .map(|row| {
-//             Drug::from_row_ref(row).unwrap()
-//         })
-//         .collect::<Vec<Drug>>())
-// }

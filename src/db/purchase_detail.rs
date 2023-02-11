@@ -1,5 +1,5 @@
 use deadpool_postgres::Client;
-use crate::{front::purchase::FRPurchaseType, models::purchase_detail::PurchaseDetail};
+use crate::{front::purchase::FRPurchaseType, models::purchase_detail::{purchase_detail::{PurchaseDetail}, frontend::FrontSalePurchaseDetail}};
 use uuid::Uuid;
 use crate::{errors::errors::MyError};
 
@@ -18,7 +18,8 @@ pub async fn add_detail(client: &Client, purchase_detail: FRPurchaseType, purcha
                 &purchase_detail.sale_money.parse::<f32>().expect("msg"),
                 &purchase_detail.self_money.parse::<f32>().expect("msg"),
                 &purchase_detail.spec,
-                &purchase_detail.manu_address
+                &purchase_detail.manu_address,
+                &Uuid::parse_str(&purchase_detail.drug_id).expect("err"),
             ],
         )
         .await.expect("msg");
@@ -28,7 +29,6 @@ pub async fn add_detail(client: &Client, purchase_detail: FRPurchaseType, purcha
 pub async fn get_purchase_detail(client: &Client, id: String) -> Result<Vec<PurchaseDetail>, MyError> {
     let _stmt = include_str!("../../sql/purchase_detail/get_detail.sql");
     let stmt = client.prepare(&_stmt).await.unwrap();
-    println!("_stmt: {:?}", _stmt);
     Ok(client
         .query(
             &stmt, &[&Uuid::parse_str(&id).expect("err")],
@@ -36,8 +36,22 @@ pub async fn get_purchase_detail(client: &Client, id: String) -> Result<Vec<Purc
         .await?
         .iter()
         .map(|row| {
-            println!("row format: {:?}", row);
             PurchaseDetail::from_row_ref(row).unwrap()
         })
         .collect::<Vec<PurchaseDetail>>())
+}
+
+pub async fn get_sale_purchase_detail(client: &Client, id: String) -> Result<FrontSalePurchaseDetail, MyError> {
+    let _stmt = include_str!("../../sql/purchase_detail/get_sale_detail.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    client
+        .query(
+            &stmt, &[&id],
+        )
+        .await?
+        .iter()
+        .map(|row| {
+            FrontSalePurchaseDetail::from_row_ref(row).unwrap()
+        })
+        .collect::<Vec<FrontSalePurchaseDetail>>().pop().ok_or(MyError::NotFound)
 }

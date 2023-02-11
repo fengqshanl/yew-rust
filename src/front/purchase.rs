@@ -12,6 +12,7 @@ pub struct FRPurchase {
 
 #[derive(Clone, Debug, PartialEq, Default, Deserialize, Serialize, ToSql, FromSql)]
 pub struct FRPurchaseType {
+    pub drug_id: String,
     pub code: String,
     pub name: String,
     pub self_money: String,

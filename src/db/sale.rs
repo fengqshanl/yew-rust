@@ -1,25 +1,27 @@
 use deadpool_postgres::Client;
-use tokio_pg_mapper::FromTokioPostgresRow;
 use uuid::Uuid;
-use crate::front::sale::FRSale;
 use std::time::{SystemTime};
-use crate::{errors::errors::MyError, models::sale::Sale};
+use tokio_pg_mapper::FromTokioPostgresRow;
+use crate::models::sale::{sale::Sale ,frontend::FrontSale};
+use crate::{errors::errors::MyError};
 
-pub async fn add_sale(client: &Client, sale_info: FRSale) -> Result<Sale, MyError> {
+pub async fn add_sale(client: &Client, sale_info: FrontSale) -> Result<Vec<Sale>, MyError> {
     let _stmt = include_str!("../../sql/sale/add_sale.sql");
     let _stmt = _stmt.replace("$table_fields", &Sale::sql_table_fields());
     let stmt = client.prepare(&_stmt).await.unwrap();
-    println!("_smt: {:?}",_stmt);
-    client
+    Ok(client
         .query(
             &stmt,
             &[
                 &Uuid::parse_str(&sale_info.drug_id).expect("msg"),
                 &sale_info.name,
                 &sale_info.number,
-                &sale_info.money,
-                &sale_info.sale,
+                &sale_info.sale_money,
+                &sale_info.total,
                 &SystemTime::now(),
+                &sale_info.code,
+                &sale_info.spec,
+                &sale_info.manu_name,
             ],
         )
         .await?
@@ -27,9 +29,7 @@ pub async fn add_sale(client: &Client, sale_info: FRSale) -> Result<Sale, MyErro
         .map(|row| {
             Sale::from_row_ref(row).unwrap()
         })
-        .collect::<Vec<Sale>>()
-        .pop()
-        .ok_or(MyError::NotFound)
+        .collect::<Vec<Sale>>())
 }
 
 pub async fn get_sale(client: &Client) -> Result<Vec<Sale>, MyError> {

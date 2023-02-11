@@ -2,7 +2,7 @@ use deadpool_postgres::Client;
 use tokio_pg_mapper::FromTokioPostgresRow;
 use uuid::Uuid;
 use std::time::{SystemTime};
-use crate::{errors::errors::MyError, models::purchase::Purchase, front::purchase::FRPurchase};
+use crate::{errors::errors::MyError, front::purchase::FRPurchase, models::purchase::purchase::Purchase};
 
 pub async fn add_purchase(client: &Client, purchase_info: FRPurchase) -> Result<(), MyError> {
     let _stmt = include_str!("../../sql/purchase/add_purchase.sql");
