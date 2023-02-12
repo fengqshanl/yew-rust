@@ -11,7 +11,7 @@ pub struct Sale {
     pub sale_id: String,
     pub drug_id: String,
     pub name: String,
-    pub number: f32,
+    pub number: i32,
     pub money: f32,
     pub code: String,
     pub total: f32,
@@ -29,10 +29,15 @@ impl Sale {
             spec: row.try_get::<&str, String>("spec")?.to_string(),
             manu_address: row.try_get::<&str, String>("manu_address")?.to_string(),
             code: row.try_get::<&str, String>("code")?.to_string(),
-            number: row.try_get::<&str, f32>("number")?,
+            number: row.try_get::<&str, i32>("number")?,
             money: row.try_get::<&str, f32>("money")?,
             total: row.try_get::<&str, f32>("total")?,
             sale_time: row.try_get::<&str, time::PrimitiveDateTime>("sale_time")?.to_string(),
         })
     }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct SaleId {
+   pub id: String,
 }

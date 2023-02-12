@@ -14,7 +14,7 @@ use dotenv::dotenv;
 use handlers::{
     drug::{get_drug},
     purchase::{add_purchase, get_purchase, get_purchase_detail, get_sale_purchase_detail},
-    sale::{add_sale, get_sale},
+    sale::{add_sale, get_sale, change_sale},
 };
 use tokio_postgres::NoTls;
 
@@ -43,6 +43,8 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::resource("/sale")
                     .route(web::post().to(add_sale))
+                    .route(web::put().to(change_sale))
+                    .route(web::delete().to(delete_sale))
                     .route(web::get().to(get_sale)),
             )
             .service(
