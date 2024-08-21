@@ -11,3 +11,11 @@ pub async fn get_drug(
     let new_drug = drug::get_drug(&client, drug_id.id.clone()).await?;
     Ok(HttpResponse::Ok().json(new_drug))
 }
+
+pub async fn search_drug(
+    db_pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+    let new_drug = drug::search_drug(&client).await?;
+    Ok(HttpResponse::Ok().json(new_drug))
+}

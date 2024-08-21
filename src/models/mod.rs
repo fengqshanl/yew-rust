@@ -5,3 +5,5 @@ pub mod inventory;
 pub mod purchase;
 pub mod sale;
 pub mod purchase_detail;
+pub mod medicine;
+pub mod basic;

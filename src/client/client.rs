@@ -1,4 +1,3 @@
-use crate::{config::app::APPCODE};
 use super::error::{Error, ErrorInfo};
 use serde::{de::DeserializeOwned};
 use std::{fmt::Debug, collections::HashMap};
@@ -14,7 +13,7 @@ where
     let mut builder = reqwest::Client::new()
         .request(method, url)
         .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
-        .header("Authorization", format!("APPCODE {}", APPCODE));
+        .header("Authorization", format!("APPCODE {}", body.clone()));
     if allow_body {
         let mut map: HashMap<&str, &str> = HashMap::new();
         map.insert("code", &body);

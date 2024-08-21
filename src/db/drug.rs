@@ -12,7 +12,7 @@ pub async fn add_drug(client: &Client, drug_info: DBDrugDetail) -> Result<FrontD
     // -- "sptmImg": "", // 条码图片
     // -- "img": "", // 图片
     // -- "goodsType": "造纸原料和纸制品>>纸制品>>个人纸制品>>纸巾", // 商品分类
-    // -- "trademark": "清风", // 品牌 
+    // -- "trademark": "清风", // 品牌
     // -- "goodsName": "清风原木纯品纸手帕", // 商品名称
     // -- "spec": "迷你型", // 规格
     // -- "note": "备注：经查，该厂商识别代码已在中国物品编码中心注册，但编码信息未按规定通报", // 备注信息
@@ -28,7 +28,7 @@ pub async fn add_drug(client: &Client, drug_info: DBDrugDetail) -> Result<FrontD
     // -- "hight": "",//高
     // -- "depth": "",//深
     // -- "gpc": "",//gpc分类代码
-    // -- "gpcType": "",//gpc分类名称    
+    // -- "gpcType": "",//gpc分类名称
     // -- "keyword": "",//关键词
     // -- "imgList": [] //
     client
@@ -63,7 +63,6 @@ pub async fn add_drug(client: &Client, drug_info: DBDrugDetail) -> Result<FrontD
         .await?
         .iter()
         .map(|row| {
-            println!("row:::: ==== {:?}", row);
             FrontDrugDetail::from_row_ref(row).unwrap()
         })
         .collect::<Vec<FrontDrugDetail>>()
@@ -97,4 +96,18 @@ pub async fn get_drug(client: &Client, code: String) -> Result<FrontDrugDetail, 
         return Ok(resu)
     }
     Ok(res[0].clone())
+}
+
+pub async fn search_drug(client: &Client) -> Result<Vec<FrontDrugDetail>, MyError> {
+    let _stmt = include_str!("../../sql/drug/get_all_drug.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    let res = client
+        .query(&stmt, &[])
+        .await?
+        .iter()
+        .map(|row| {
+            FrontDrugDetail::from_row_ref(row).unwrap()
+        })
+        .collect::<Vec<FrontDrugDetail>>();
+    Ok(res.clone())
 }

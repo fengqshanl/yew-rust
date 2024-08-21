@@ -35,6 +35,6 @@ pub async fn delete_sale(
     db_pool: web::Data<Pool>,
 ) -> Result<HttpResponse, Error> {
     let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
-    let new_sale = sale::delete_sale(&client, sale.id.into_inner()).await?;
+    let new_sale = sale::delete_sale(&client, sale.id.clone()).await?;
     Ok(HttpResponse::Ok().json(new_sale))
 }
