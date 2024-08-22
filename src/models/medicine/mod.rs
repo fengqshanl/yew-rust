@@ -70,6 +70,27 @@ impl Medicine {
             purchasing_price: row.try_get::<&str, f32>("purchasing_price")?,
         })
     }
+
+    pub fn row_2_quick_search(row: &Row) -> Result<Self, Error> {
+        Ok(Medicine{
+            medicine_id: row.try_get::<&str, Uuid>("medicine_id")?.hyphenated().to_string(),
+            material_name: row.try_get::<&str, String>("material_name")?.to_string(),
+            material_alias: row.try_get::<&str, String>("material_alias")?.to_string(),
+            manufacturer: row.try_get::<&str, String>("manufacturer")?.to_string(),
+            storage_condition: row.try_get::<&str, String>("storage_condition")?.to_string(),
+            create_time: row.try_get::<&str, String>("create_time")?.to_string(),
+            status: row.try_get::<&str, String>("status")?.to_string(),
+            purchasing_base: row.try_get::<&str, f32>("purchasing_base")?,
+            delete_time: row.try_get::<&str, String>("delete_time")?.to_string(),
+            delete_by: row.try_get::<&str, String>("delete_by")?.to_string(),
+            update_time: row.try_get::<&str, String>("update_time")?.to_string(),
+            update_by: row.try_get::<&str, String>("update_by")?.to_string(),
+            create_by: row.try_get::<&str, String>("create_by")?.to_string(),
+            traceability_code: row.try_get::<&str, String>("traceability_code")?.to_string(),
+            selling_price: row.try_get::<&str, f32>("selling_price")?,
+            purchasing_price: row.try_get::<&str, f32>("purchasing_price")?,
+        })
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -165,4 +186,9 @@ impl MedicineFrontendModify {
 pub struct MedicineQuery {
     #[serde(rename = "medicineId")]
     pub medicine_id: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct MedicineQuickSearch {
+    pub search: String,
 }

@@ -1,8 +1,7 @@
 use actix_web::{web, Error, HttpResponse};
 use deadpool_postgres::{Client, Pool};
 use crate::{db, errors::errors::MyError, models::medicine::{Medicine, MedicineFrontendCreate, MedicineFrontendModify}};
-use crate::models::drug::local::DrugId;
-use crate::models::medicine::MedicineQuery;
+use crate::models::medicine::{MedicineQuery, MedicineQuickSearch};
 
 // 列表查询
 pub async fn search_medicine(
@@ -40,3 +39,21 @@ pub async fn get_medicine_detail(
     Ok(HttpResponse::Ok().json(medicine_list))
 }
 // 删除耗材
+pub async fn delete_medicine(
+    medicine: web::Query<MedicineQuery>,
+    db_pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+    let medicine_list = db::medicine::delete_medicine_detail(&client, medicine.medicine_id.clone()).await?;
+    Ok(HttpResponse::Ok().json(medicine_list))
+}
+
+// 模糊查询
+pub async fn quick_search(
+    search: web::Query<MedicineQuickSearch>,
+    db_pool: web::Data<Pool>,
+) -> Result<HttpResponse, Error> {
+    let client: Client = db_pool.get().await.map_err(MyError::PoolError)?;
+    let medicine_list = db::medicine::quick_search(&client, search.search.clone()).await?;
+    Ok(HttpResponse::Ok().json(medicine_list))
+}

@@ -15,7 +15,7 @@ use actix_web::{web, App, HttpServer, middleware};
 use actix_web::middleware::Logger;
 use dotenv::dotenv;
 use handlers::{
-    drug::{get_drug, search_drug}, medicine::{search_medicine, create_medicine, modify_medicine},
+    drug::{get_drug, search_drug}, medicine::{search_medicine, create_medicine, modify_medicine, delete_medicine, quick_search},
     purchase::{add_purchase, get_purchase, get_purchase_detail, get_sale_purchase_detail},
     sale::{add_sale, get_sale, change_sale, delete_sale},
     basic::{get_dict}
@@ -54,10 +54,15 @@ async fn main() -> std::io::Result<()> {
                     .route(web::get().to(search_medicine))
                     .route(web::post().to(create_medicine))
                     .route(web::put().to(modify_medicine))
+                    .route(web::delete().to(delete_medicine))
             )
             .service(
                 web::resource("/medicine_detail")
                     .route(web::get().to(get_medicine_detail))
+            )
+            .service(
+                web::resource("/quickSearch")
+                    .route(web::get().to(quick_search))
             )
             .service(
                 web::resource("/sale")

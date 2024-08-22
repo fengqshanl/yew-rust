@@ -1,4 +1,6 @@
+use chrono::Utc;
 use deadpool_postgres::Client;
+use serde::de::Unexpected::Str;
 use uuid::Uuid;
 use crate::{errors::errors::MyError, models::medicine::Medicine, util::dict::validate_dict};
 use crate::models::medicine::{MedicineFrontendCreate, MedicineFrontendModify};
@@ -96,4 +98,31 @@ pub async fn get_medicine_detail(client: &Client, medicine_id: String) -> Result
             Medicine::row_2_modify(row).unwrap()
         })
         .collect::<Vec<Medicine>>().pop().expect("get detail error"))
+}
+
+pub async fn delete_medicine_detail(client: &Client, medicine_id: String) -> Result<String, MyError> {
+    let _stmt = include_str!("../../sql/medicine/delete_medicine.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    client
+        .query(&stmt, &[
+            &String::from("admin"),
+            &Utc::now().format("%Y-%m-%d %H:%M:%S").to_string(),
+            &Uuid::parse_str(&medicine_id).expect("err")
+        ]).await?;
+    Ok(String::from("操作成功"))
+}
+
+pub async fn quick_search(client: &Client, search: String) -> Result<Vec<Medicine>, MyError> {
+    let _stmt = include_str!("../../sql/medicine/like_search.sql");
+    let stmt = client.prepare(&_stmt).await.unwrap();
+    println!("stmt: {:?}, search: {:?}", _stmt.clone(), search.clone());
+    let medicine_list = client
+        .query(&stmt, &[
+            &format!("%{}%", search.clone()),
+            &format!("%{}%", search.clone()),
+        ]).await?.iter().map(|row| {
+            println!("row: {:?}", row.clone());
+            Medicine::row_2_quick_search(row).unwrap()
+        }).collect::<Vec<Medicine>>();
+    Ok(medicine_list)
 }
